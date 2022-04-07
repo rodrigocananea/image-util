@@ -1,0 +1,80 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+
+  compile:
+    runs-on: ubuntu-20.04
+    name: Compile
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 8
+      uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+        cache: maven
+    - name: Compile code
+      run: mvn -B compile && dir
+      
+  package:
+    runs-on: ubuntu-20.04
+    needs: [ compile ]
+    name: Empacotar executavel
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-java@v2
+      with:
+        java-version: '8'
+        distribution: 'adopt'
+        cache: maven
+    - run: mvn -B package --file pom.xml
+    - run: mkdir imageutil && cp target/*.jar imageutil
+    - uses: actions/upload-artifact@v2
+      with:
+        name: ImageUtil
+        path: imageutil
+        
+
+  release:
+      name: Liberar versão
+      runs-on: ubuntu-20.04
+      needs: [ package ]
+      steps:
+        - uses: actions/checkout@v2
+        - name: Criando pastas
+          run: mkdir executavel
+        - name: Baixando executável
+          uses: actions/download-artifact@master
+          with:
+            name: ImageUtil
+            path: imageutil
+        - name: Compactando executavel
+          uses: vimtor/action-zip@v1
+          with:
+            files: executavel/*.jar
+            dest: executavel/ImageUtil.zip
+        - name: Criando release
+          uses: actions/create-release@v1
+          id: create_release
+          with:
+            draft: false
+            prerelease: false
+            release_name: ${{ steps.version.outputs.version }}
+            tag_name: ${{ github.ref }}
+            body_path: CHANGELOG.md
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+        - name: Subir executavel (zip) para release
+          uses: actions/upload-release-asset@v1
+          env:
+            GITHUB_TOKEN: ${{ github.token }}
+          with:
+            upload_url: ${{ steps.create_release.outputs.upload_url }}
+            asset_path: ./executavel/ImageUtil.zip
+            asset_name: ImageUtil.zip
+            asset_content_type: application/zip
