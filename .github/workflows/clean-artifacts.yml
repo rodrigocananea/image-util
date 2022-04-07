@@ -1,0 +1,14 @@
+name: 'Clean artifacts'
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 1 * * *'
+
+jobs:
+  delete-artifacts:
+    runs-on: ubuntu-20.04
+    steps:
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.ERP_TOKEN }}
+          expire-in: 1days # Set this to 0 to delete all artifacts
