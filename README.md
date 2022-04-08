@@ -24,7 +24,7 @@ if (retorno == JFileChooser.APPROVE_OPTION) {
 
 File imagem = new File("teste.jpg");
 
-ImageUtil iu = ImageUtil.init(imagem ));
+ImageUtil iu = ImageUtil.init(imagem));
 
 // Comprimir qualidade com valor padrão de 50%
 iu.comprimirQualidade();
