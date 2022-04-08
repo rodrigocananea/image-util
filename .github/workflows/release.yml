@@ -1,6 +1,7 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     tags:
       - '*'
@@ -52,7 +53,7 @@ jobs:
           uses: actions/download-artifact@master
           with:
             name: ImageUtil
-            path: imageutil
+            path: executavel
         - name: Compactando executavel
           uses: vimtor/action-zip@v1
           with:
