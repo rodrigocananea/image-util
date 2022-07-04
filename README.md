@@ -30,7 +30,7 @@ ImageUtil iu = ImageUtil.init(imagem));
 iu.comprimirQualidade();
 
 // Comprimir qualidade com valor informado de 40%
-iu.comprimirQualidade(45);
+iu.comprimirQualidade(40);
 
 // Comprimir tamanho com valor padrão de 500 x 500
 iu.comprimirTamanho();
